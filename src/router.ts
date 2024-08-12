@@ -12,7 +12,7 @@ const routes = [
     path: "/login",
     name: "Login",
     component: LoginView,
-    beforeEnter: (to, from, next) => {
+    beforeEnter: (_to: any, _from: any, next: any) => {
       if (authService.isAuthenticated()) {
         next({ path: "/dashboard/user" });
       } else {
@@ -32,7 +32,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth && !authService.isAuthenticated()) {
     next("/login");
   } else {
