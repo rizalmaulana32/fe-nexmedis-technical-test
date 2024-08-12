@@ -1,9 +1,5 @@
-<!-- src/components/UserForm.vue -->
 <template>
-  <div class="bg-white p-4 shadow-md rounded-lg mb-4">
-    <h2 class="text-xl font-semibold mb-4">
-      {{ initialUser ? "Edit User" : "Create User" }}
-    </h2>
+  <div>
     <form @submit.prevent="submitForm">
       <div class="mb-4">
         <label for="name" class="block mb-1 text-sm text-gray-600">Name:</label>
@@ -20,7 +16,7 @@
       <div class="mb-4">
         <label for="job" class="block mb-1 text-sm text-gray-600">Job:</label>
         <input
-          type="job"
+          type="text"
           v-model="job"
           id="job"
           class="w-full px-4 py-2 text-sm border rounded-lg"
@@ -57,10 +53,11 @@ const props = defineProps<{ initialUser: User | null }>();
 const emit = defineEmits<{
   (e: "submit"): void;
   (e: "cancel"): void;
+  (e: "success"): void;
 }>();
 
 const { name, job, nameError, jobError, error, loading, submitForm } =
-  useUserForm(props.initialUser);
+  useUserForm(props.initialUser, emit);
 
 const cancel = () => {
   emit("cancel");

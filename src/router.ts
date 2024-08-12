@@ -1,4 +1,3 @@
-// src/router/index.ts
 import { createRouter, createWebHistory } from "vue-router";
 import authService from "./services/authService";
 import LoginView from "./views/LoginView.vue";
@@ -24,7 +23,7 @@ const routes = [
   {
     path: "/dashboard/user",
     component: UserList,
-    meta: { requiresAuth: true }, // Protect this route
+    meta: { requiresAuth: true },
   },
 ];
 

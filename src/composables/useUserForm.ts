@@ -1,4 +1,3 @@
-// src/composables/useUserForm.ts
 import { ref } from "vue";
 import { useField, useForm } from "vee-validate";
 import * as yup from "yup";
@@ -11,7 +10,7 @@ const schema = yup.object({
   job: yup.string().required("Job is required"),
 });
 
-export function useUserForm(initialUser: User | null = null) {
+export function useUserForm(initialUser: User | null = null, emit: any) {
   const loading: Ref<boolean> = ref(false);
   const error: Ref<string | null> = ref(null);
 
@@ -33,6 +32,7 @@ export function useUserForm(initialUser: User | null = null) {
       } else {
         await userService.createUser(values);
       }
+      emit("success");
       resetForm();
     } catch (err: any) {
       error.value = "An error occurred. Please try again.";

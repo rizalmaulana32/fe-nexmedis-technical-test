@@ -68,7 +68,6 @@ const logout = () => {
 </script>
 
 <style scoped>
-/* Ensure the sidebar is hidden on mobile and shown on larger screens */
 @media (min-width: 1024px) {
   .lg\:translate-x-0 {
     transform: translateX(0);

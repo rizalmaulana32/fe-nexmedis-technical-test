@@ -1,4 +1,3 @@
-// src/composables/useLogin.ts
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import authService from "../services/authService";
@@ -37,7 +36,6 @@ export function useLogin() {
         password: values.password,
       });
 
-      // Redirect to the dashboard after successful login
       router.push("/dashboard/user");
     } catch (err: any) {
       if (err.response && err.response.data) {

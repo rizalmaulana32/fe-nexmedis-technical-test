@@ -1,13 +1,10 @@
-// src/services/apiClient.ts
 import axios from "axios";
 import authService from "./authService";
 
-// Create a new axios instance
 const apiClient = axios.create({
-  baseURL: "https://reqres.in",
+  baseURL: import.meta.env.VITE_API_BASE_URL,
 });
 
-// Interceptor to add the Authorization header if a token is available
 apiClient.interceptors.request.use(
   (config) => {
     const token = authService.getToken();

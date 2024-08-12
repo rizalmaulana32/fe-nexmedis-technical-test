@@ -1,4 +1,3 @@
-<!-- src/views/UserList.vue -->
 <template>
   <DashboardLayout>
     <h1 class="text-2xl font-semibold mb-4 text-center lg:text-left">
@@ -6,11 +5,12 @@
     </h1>
 
     <button
-      @click="showCreateForm = true"
+      @click="openModal"
       class="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg"
     >
       Create New User
     </button>
+
     <div class="overflow-x-auto">
       <table class="editor_listing_table bg-white shadow-md rounded-lg">
         <thead>
@@ -31,11 +31,14 @@
             <td class="py-2 px-4 border-b text-center">{{ user.last_name }}</td>
             <td class="py-2 px-4 border-b text-center">{{ user.email }}</td>
             <td class="py-2 px-4 border-b text-center">
+              <button @click="viewUser(user)" class="px-2 py-1 text-green-500">
+                View
+              </button>
               <button @click="editUser(user)" class="px-2 py-1 text-blue-500">
                 Edit
               </button>
               <button
-                @click="deleteUser(user.id)"
+                @click="showDeleteConfirmation(user)"
                 class="px-2 py-1 text-red-500"
               >
                 Delete
@@ -46,11 +49,31 @@
       </table>
     </div>
 
-    <UserForm
-      v-if="showCreateForm || selectedUser"
-      :initialUser="selectedUser"
-      @submit="handleSubmit"
-      @cancel="handleCancel"
+    <!-- Modal with UserForm -->
+    <Modal :isVisible="showModal" :title="modalTitle" @close="closeModal">
+      <UserForm
+        :initialUser="selectedUser"
+        @submit="handleSubmit"
+        @cancel="handleCancel"
+        @success="handleSuccess"
+      />
+    </Modal>
+
+    <!-- Confirmation Dialog -->
+    <ConfirmationDialog
+      v-if="deleteConfirmationVisible"
+      :isVisible="deleteConfirmationVisible"
+      :message="'Are you sure you want to delete this user?'"
+      @confirm="confirmDelete"
+      @cancel="cancelDelete"
+    />
+
+    <!-- User Detail Modal -->
+    <UserDetailModal
+      v-if="showUserDetailModal"
+      :isVisible="showUserDetailModal"
+      :user="selectedUser"
+      @close="closeUserDetailModal"
     />
   </DashboardLayout>
 </template>
@@ -59,12 +82,19 @@
 import { ref, onMounted } from "vue";
 import DashboardLayout from "../layouts/DashboardLayout.vue";
 import UserForm from "../components/User/UserForm.vue";
+import Modal from "../components/Modal/Modal.vue";
+import ConfirmationDialog from "../components/ConfirmationDialog/ConfirmationDialog.vue";
+import UserDetailModal from "../components/UserDetailModal/UserDetailModal.vue";
 import userService from "../services/userService";
 import type { User } from "../services/userService";
 
 const users = ref<User[]>([]);
-const showCreateForm = ref(false);
-const selectedUser = ref();
+const showModal = ref(false);
+const selectedUser = ref<User | null>(null);
+const modalTitle = ref("");
+const deleteConfirmationVisible = ref(false);
+const userToDelete = ref<User | null>(null);
+const showUserDetailModal = ref(false);
 
 const loadUsers = async () => {
   try {
@@ -75,31 +105,72 @@ const loadUsers = async () => {
   }
 };
 
-const editUser = (user: User) => {
+const openModal = () => {
+  selectedUser.value = null;
+  modalTitle.value = "Create New User";
+  showModal.value = true;
+};
+
+const editUser = (user: any) => {
   selectedUser.value = {
     id: user.id,
     name: user.first_name,
     job: user.last_name,
   };
+  modalTitle.value = "Edit User";
+  showModal.value = true;
 };
 
-const deleteUser = async (id: number) => {
-  try {
-    await userService.deleteUser(id);
-    users.value = users.value.filter((user) => user.id !== id);
-  } catch (error) {
-    console.error("Failed to delete user:", error);
+const showDeleteConfirmation = (user: User) => {
+  userToDelete.value = user;
+  deleteConfirmationVisible.value = true;
+};
+
+const confirmDelete = async () => {
+  if (userToDelete.value) {
+    try {
+      await userService.deleteUser(userToDelete.value.id);
+      users.value = users.value.filter(
+        (user) => user.id !== userToDelete.value!.id
+      );
+      deleteConfirmationVisible.value = false;
+      userToDelete.value = null;
+    } catch (error) {
+      console.error("Failed to delete user:", error);
+    }
   }
+};
+
+const cancelDelete = () => {
+  deleteConfirmationVisible.value = false;
+  userToDelete.value = null;
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  selectedUser.value = null;
 };
 
 const handleSubmit = async () => {
   await loadUsers();
-  showCreateForm.value = false;
-  selectedUser.value = null;
 };
 
 const handleCancel = () => {
-  showCreateForm.value = false;
+  closeModal();
+};
+
+const handleSuccess = async () => {
+  await loadUsers();
+  closeModal();
+};
+
+const viewUser = (user: User) => {
+  selectedUser.value = user;
+  showUserDetailModal.value = true;
+};
+
+const closeUserDetailModal = () => {
+  showUserDetailModal.value = false;
   selectedUser.value = null;
 };
 

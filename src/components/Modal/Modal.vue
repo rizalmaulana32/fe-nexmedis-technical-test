@@ -1,4 +1,3 @@
-<!-- src/components/Modal.vue -->
 <template>
   <div
     v-if="isVisible"
