@@ -30,18 +30,23 @@
             </td>
             <td class="py-2 px-4 border-b text-center">{{ user.last_name }}</td>
             <td class="py-2 px-4 border-b text-center">{{ user.email }}</td>
-            <td class="py-2 px-4 border-b text-center">
-              <button @click="viewUser(user)" class="px-2 py-1 text-green-500">
-                View
+            <td class="py-2 px-4 border-b text-center space-x-2">
+              <button @click="viewUser(user)" class="w-7">
+                <img src="../assets/eye-svgrepo-com.svg" alt="" srcset="" />
               </button>
-              <button @click="editUser(user)" class="px-2 py-1 text-blue-500">
-                Edit
+              <button @click="editUser(user)" class="w-7">
+                <img
+                  src="../assets/pencil-edit-svgrepo-com.svg"
+                  alt=""
+                  srcset=""
+                />
               </button>
-              <button
-                @click="showDeleteConfirmation(user)"
-                class="px-2 py-1 text-red-500"
-              >
-                Delete
+              <button @click="showDeleteConfirmation(user)" class="w-7">
+                <img
+                  src="../assets/trash-alt-svgrepo-com.svg"
+                  alt=""
+                  srcset=""
+                />
               </button>
             </td>
           </tr>
